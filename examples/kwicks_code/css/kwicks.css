@@ -1,0 +1,119 @@
+/*Start Tutorial CSS - Ignore*/
+
+body {
+	background-color:#333;
+}
+
+img {
+	border:none;
+}
+
+#wrapper {
+	position:absolute;
+	width:780;	
+	height:400px;
+	top:50%;
+	left:50%;
+	margin-top:-200px;
+	margin-left:-390px;
+	text-align:center;
+}
+
+#header {
+	display:block;
+	position:relative;
+	width:776px;
+	height:213px;
+	background:url(../images/header.png) no-repeat;
+}
+
+#kwickswrap {
+	position:relative;
+	padding-left:8px;
+}
+
+#footer {
+	position:relative;
+	width:776px;
+	height:80px;
+	padding-top:30px;
+	background:url(../images/footer.png) no-repeat;
+}
+
+#links {  
+     list-style: none;  
+     position: relative;  
+     margin: 0;  
+     padding: 0;
+}
+
+#links li {
+	float:left;
+	margin-left:70px;
+}
+
+/*End Tutorial CSS - Ignore*/
+
+/*Start Kwicks CSS*/
+
+.kwicks {  
+     list-style: none;  
+     position: relative;  
+     margin: 0;  
+     padding: 0;
+	 background:#FFF; 
+	 /*Set this to the predominant background color of the kwicks image or use an image background for gradients, textures etc. Otherwise flickering might show up during animation in some browsers.*/
+}
+
+.kwicks li{  
+    display: block;  
+    overflow: hidden;  
+    padding: 0;  
+    cursor: pointer;  
+	float: left;
+	width: 190px;
+	height: 140px;
+	margin-right: 0px;
+	background-image:url(../images/kwicks_bg.jpg);/*This is the one image used as background for the whole effect.*/
+	background-repeat:no-repeat;
+}
+.kwicks li a{
+	display:block;
+	height:140px;
+	text-indent:-9999px;
+	outline:none;
+}
+
+#kwick_1 {
+	background-position:0px 0px;
+}
+
+#kwick_2 {
+	background-position:-400px 0px;
+}
+
+#kwick_3 {
+	background-position:-800px 0px;
+}
+
+#kwick_4 { 
+	background-position:-1200px 0px;
+}
+
+#kwick_1.active, #kwick_1:hover { 
+	background-position: 0 bottom;
+}
+
+#kwick_2.active, #kwick_2:hover{
+	background-position: -400px bottom;
+}
+
+#kwick_3.active, #kwick_3:hover {
+	background-position: -800px bottom;
+}
+
+#kwick_4.active, #kwick_4:hover {
+	background-position: -1200px bottom; 
+}
+
+/*End Kwicks CSS*/

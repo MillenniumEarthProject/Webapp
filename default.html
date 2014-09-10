@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<html>
+    
+    <head>
+        <title>Esri Leaflet Demo</title>
+        <!-- leaflet -->
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+        <!--[if lte IE 8]>
+            <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.ie.css" />
+        <![endif]-->
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+
+        <script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
+        <script type="text/javascript" src="js/jquery.kwicks-1.5.1.js"></script>
+        <script type="text/javascript" src="js/jquery.corner.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+        <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js'></script>
+        <link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css' rel='stylesheet' />
+	
+        <!-- Load Leaflet from CDN-->
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+        <!-- Load Esri Leaflet from CDN -->
+        <script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/0.0.1-beta.5/esri-leaflet.js"></script>
+        <script src="js/esri_leaflet.js"></script>
+    </head>
+
+    <body>
+        <div id="map"></div>
+      
+        <div id='divTitle'>
+            <ul class="kwicks horizontal">
+                <li>
+                    <div class='divKwickInner'>
+                        <div class='divKwickImage'><img src="image/news.png" alt="News" /></div>
+                        <div class='divKwickTitle'>News and Updates</div>
+                    </div>
+                </li>
+                <li>
+                    <div class='divKwickInner'>
+                        <div class='divKwickImage'><img src="image/target.png" alt="MDG Status" /></div>
+                        <div class='divKwickTitle'>SDG Status</div>
+                    </div>
+
+                    <div class='divKwickContent'>
+                        <div><input type="checkbox" onclick="showMDG1();">World Bank MDG 1</div>
+                        <div><input type="checkbox" onclick="showMDG1();">World Bank MDG 2</div>
+                        <div><input type="checkbox" onclick="showMDG1();">World Bank MDG 3</div>
+                    </div>
+                </li>
+                <li>
+                    <div class='divKwickInner'>
+                        <div class='divKwickImage'><img src="image/develop.png" alt="Development" /></div>
+                        <div class='divKwickTitle'>City Models/Development Plans</div>
+                    </div>
+                </li>
+
+                <li>
+                    <div class='divKwickInner'>
+                        <div class='divKwickImage'><img src="image/maps.png" alt="Maps" /></div>
+                        <div class='divKwickTitle'>Story Maps</div>
+                    </div>
+                </li>
+                <li>
+                    <div class='divKwickInner'>
+                        <div class='divKwickImage'><img src="image/games.png" alt="Games" /></div>
+                        <div class='divKwickTitle'>Educational Games</div>
+                    </div>
+                </li>
+                <li>
+                    <div class='divKwickInner'>
+                        <div class='divKwickImage'><img src="image/users.png" alt="Users" /></div>
+                        <div class='divKwickTitle'>User Submitted</div>
+                    </div>
+                </li>
+                <li>
+                    <div class='divKwickInner'>
+                        <div class='divKwickImage'><img src="image/network.png" alt="Organizations" /></div>
+                        <div class='divKwickTitle'>Organizations</div>
+                    </div>
+                </li>
+                <li id='liKwikLast'>
+                    <div class='divKwickInner'>
+                        <div class='divKwickImage'><img src="image/addmap.png" alt="Add Map" /></div>
+                        <div class='divKwickTitle'>Create a new Map</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+      
+        <script>
+
+            var map = L.map('map',{minZoom: 2}).setView([11.505,  -0.09], 2);
+            L.esri.basemapLayer("Topographic").addTo(map);
+
+            tileURL = 'https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png'
+            featureURL = "http://dev.consciousglobalchange.org/arcgis/rest/services/MEP/noRelate_tester/FeatureServer/0"
+            mapServerURL = "http://dev.consciousglobalchange.org/arcgis/rest/services/MEP/webmap_catalog/MapServer/0"
+
+            L.tileLayer(tileURL, 
+            {
+                attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms &amp; Feedback</a>'
+            }).addTo(map);
+
+            var countries = L.esri.featureLayer(featureURL, 
+            {
+                style: function (feature) 
+                {
+                    return getStyle(feature);
+                },
+
+                onEachFeature: function(geojson, layer)
+                {
+                    if (geojson.properties && geojson.properties.hyperlink) 
+                    {
+                        layer.bindPopup( 
+                            "<h3><b>Country:</b> " + "<u>" + geojson.properties.CNTRY_NAME + "</u></h3><br>"
+                            + "<b>Map Title:</b> " + geojson.properties.map_title + "<br>"
+                            + "<b>Abstract:</b> " + geojson.properties.abstract + "<br>"
+                            + "<b>Description:</b> " + geojson.properties.description + "<br>"
+                            + "<b>Development Goals</b> " + geojson.properties.dev_goals + "<br>"
+                            + "<b>Audience:</b> " + geojson.properties.audience + "<br>"
+                            + "<b>hyperlink:</b> " + geojson.properties.hyperlink + "<br>");
+                    }
+                    if (geojson.properties && !geojson.properties.hyperlink) 
+                    {layer.bindPopup("<h3><b>Country:</b> " + "<u>" + geojson.properties.CNTRY_NAME + "</u></h3><br>");}
+                    layer.on(
+                    {
+                        mouseover: highlightFeature,
+                        mouseout: resetHighlight
+                    });
+                }
+            }).addTo(map);
+
+            function getStyle(feature)
+            {
+//			return {color: "#70ca49", weight: 2,  fillOpacity: 0.3};
+                return {color: 'grey', weight: 2,  fillOpacity: 0.1};
+            }
+
+            function highlightFeature(e) 
+            {
+                var layer = e.target;
+		
+                layer.setStyle(
+                {
+                    weight: 2,
+                    color: 'red',
+                    fillOpacity: 0.5
+                });
+                if (!L.Browser.ie && !L.Browser.opera) 
+                {
+                    layer.bringToFront();
+                }
+            }
+
+            function resetHighlight(e) 
+            {
+                countries.resetStyle(e.target);
+            }
+		
+
+
+        </script>
+
+        <script type="text/javascript">
+            $().ready(function () {
+                $('.kwicks').kwicks({
+                    max: 275,
+                    spacing: 10,
+                });
+
+                $('ul.kwicks').find('li').each(function (index) {
+                    $(this).corner();
+                    $(this).find("div.divKwickTitle").hide();
+                    $(this).find("div.divKwickContent").hide();
+
+                    $(this).mouseover(
+                        function () {
+                            $(this).find("div.divKwickTitle").fadeIn(1000);
+                            $(this).find("div.divKwickContent").fadeIn(1000);
+                        });
+
+                    $(this).mouseleave(
+                        function () {
+                            $(this).find("div.divKwickTitle").stop(true, true).fadeOut('fast');
+                            $(this).find("div.divKwickContent").stop(true, true).fadeOut('fast');
+                        });
+                });
+            });
+
+            function showMDG1() {
+                alert("worked");
+            }
+
+        </script>
+
+    </body>
+
+</html>

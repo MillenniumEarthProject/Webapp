@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<title>Example jqDock</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="Example%20jqDock_files/example.css">
+<script type="text/javascript" src="Example%20jqDock_files/jquery-latest.js"></script>
+<script type="text/javascript" src="Example%20jqDock_files/jquery.js"></script>
+<script type="text/javascript" src="Example%20jqDock_files/example.js"></script>
+<style type="text/css">
+	/*position and hide the menu initially - leave room for menu items to expand...*/
+	#page {padding-top:160px; padding-bottom:20px; width:100%;}
+	#menu {position:absolute; top:0; left:0; width:100%; display:none;}
+	/*hide the submenus...*/
+	#submenus {display:none;}
+/*dock styling...*/
+	/*...centre the dock...*/
+	#menu div.jqDockWrap {margin:0 auto;}
+	/*...set the cursor...*/
+	#menu div.jqDock {cursor:pointer;}
+/*label styling...*/
+	/*this is actually the sub-menu positioning and styling...*/
+	.jqDockLabel {z-index:999;}
+	.jqDockLabel ul {position:absolute; top:-20px; right:2px; padding:0; margin:0;
+		list-style-type:none; white-space:nowrap; background-color:#ff9900; border:2px solid #666666;}
+	.jqDockLabel li {position:relative; border:0 none; padding:0; margin:0;}
+	.jqDockLabel li a {display:block; height:18px; line-height:18px; outline:0 none; position:relative;}
+	.jqDockLabel li a.clicked {background-color:#ffff00;}
+	.jqDockLabel li a:hover {background-color:#0000cc; color:#ffffff;}
+	.jqDockLabel li a.clicked:hover {background-color:#0066cc; color:#ffffff;}
+	.jqDockLabel li a span {padding:0 15px 0 5px; display:block;}
+	.jqDockLabel a img {position:absolute; top:4px; right:0;}
+	/*...and sub-sub-menus...*/
+	.jqDockLabel ul ul {left:100%; top:-2px; right:auto; display:none;}
+</style>
+<script type="text/javascript">
+jQuery(document).ready(function($){
+	// set up the options to be used for jqDock...
+	var dockOptions =
+		{ align: 'top' // horizontal menu, with expansion DOWN from a fixed TOP edge
+		, size: 60 //increase 'at rest' size to 60px
+		, labels: true  // add labels (defaults to 'br')
+		, setLabel: function(txt, i, el){
+				//append a clone of the relevant sub-menu to the label, div.jqDockLabel...
+				//Note that I don't need to add the inner wrapper - div.jqDockLabelText - 
+				//because I can reposition the sub-menus within div.jqDockLabel itself
+				$(el).append($('#submenus>li>ul').eq(i).clone(true))
+					//...and intercept mousemoves to prevent propagation and stop
+					//the dock resizing as the cursor moves over the sub-menus...
+					.bind('mousemove', function(){ 
+						return false; 
+					})
+					//put a one-off mouseenter on every sub-menu to (re)set
+					//contained anchor widths...
+					.find('ul').one('mouseenter', function(){
+						$('>li>a', this).each(function(){
+								$(this).width($(this).parent().width());
+							});
+						return false;
+					}).end()
+					//for this example, put a click handler on every sub-menu anchor
+					//that simply toggles a class to change background colour...
+					.find('a').click(function(){
+						$(this).toggleClass('clicked');
+						this.blur();
+						return false;
+					})
+					//put a hover on any sub-menu LI that has a child menu, to show/hide
+					//that child menu; and allow mouseleave to propagate up so that coming
+					//completely off the sub-menu structure will still collapse the dock...
+					.next('ul').parent().hover(function(ev){
+						var mLeave = ev.type == 'mouseleave';
+						$('>ul', this)[mLeave ? 'hide' : 'show']();
+						return mLeave;
+					})
+					//add a visual indicator that a child menu exists...
+					.find('>a').append("<"+"img src='images/submenu.gif' alt='' />");
+				return false;
+			}
+		};
+	// ...and apply...
+	$('#menu').jqDock(dockOptions);
+});
+</script>
+</head>
+<body>
+	<div id="page">
+		<div style="visibility: visible; display: block;" class="jqDocked" id="menu"><div class="jqDockWrap" style="position: relative; padding: 0px; width: 418px; height: 60px;"><div class="jqDock" id="jqDock0" style="position: absolute; top: 0px; left: 59px; padding: 0px; margin: 0px; overflow: visible; height: 60px; width: 300px;"><div class="jqDockItem jqDockMouse0" style="position: relative; padding: 0px; margin: 0px; border: 0px none; background-color: transparent; float: left; filter: inherit;"><div style="position: relative; padding: 0px; margin: 0px; border: 0px none; background-color: transparent; height: 60px; width: 60px; filter: inherit;"><img class="jqDockMouse0" style="position: relative; padding: 0px; margin: 0px; border-width: 0px; border-style: none; vertical-align: top; display: block; width: 100%; height: 100%; filter: inherit;" src="Example%20jqDock_files/library.png" alt=""><div class="jqDockLabel jqDockLabelImage" style="position: absolute; margin: 0px; display: none; top: auto; left: auto; bottom: 0px; right: 0px; filter: inherit;"><ul style="filter: inherit;">
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option L1</span><img style="filter: inherit;" src="Example%20jqDock_files/submenu.gif" alt=""></a>
+						<ul style="filter: inherit;">
+							<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-sub-option L1-S1</span></a></li>
+							<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-sub L1-S2</span></a></li>
+						</ul>
+					</li>
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub L2</span></a></li>
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option L3</span><img style="filter: inherit;" src="Example%20jqDock_files/submenu.gif" alt=""></a>
+						<ul style="filter: inherit;">
+							<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-sub-option L3-S1</span></a></li>
+							<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-sub L3-S2</span></a></li>
+							<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-sub-option L3-S3</span><img style="filter: inherit;" src="Example%20jqDock_files/submenu.gif" alt=""></a>
+								<ul style="filter: inherit;">
+									<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-sub-sub L3-S3-S1</span></a></li>
+									<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-sub-sub L3-S3-S2</span></a></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option L4</span></a></li>
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option L5</span></a></li>
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option L6</span></a></li>
+				</ul></div></div></div><div class="jqDockItem jqDockMouse1" style="position: relative; padding: 0px; margin: 0px; border: 0px none; background-color: transparent; float: left; filter: inherit;"><div style="position: relative; padding: 0px; margin: 0px; border: 0px none; background-color: transparent; height: 60px; width: 60px; filter: inherit;"><img class="jqDockMouse1" style="position: relative; padding: 0px; margin: 0px; border-width: 0px; border-style: none; vertical-align: top; display: block; width: 100%; height: 100%; filter: inherit;" src="Example%20jqDock_files/tunes.png" alt=""><div class="jqDockLabel jqDockLabelImage" style="position: absolute; margin: 0px; display: none; top: auto; left: auto; bottom: 0px; right: 0px; filter: inherit;"><ul style="filter: inherit;">
+					<li style="filter: inherit;"><a style="filter: inherit; width: 96px;" href="#"><span style="filter: inherit;">sub-option T1</span></a></li>
+					<li style="filter: inherit;"><a style="filter: inherit; width: 96px;" href="#"><span style="filter: inherit;">sub-option T2</span></a></li>
+					<li style="filter: inherit;"><a style="filter: inherit; width: 96px;" href="#"><span style="filter: inherit;">sub-option T3</span></a></li>
+				</ul></div></div></div><div class="jqDockItem jqDockMouse2" style="position: relative; padding: 0px; margin: 0px; border: 0px none; background-color: transparent; float: left; filter: inherit;"><div style="position: relative; padding: 0px; margin: 0px; border: 0px none; background-color: transparent; height: 60px; width: 60px; filter: inherit;"><img class="jqDockMouse2" style="position: relative; padding: 0px; margin: 0px; border-width: 0px; border-style: none; vertical-align: top; display: block; width: 100%; height: 100%; filter: inherit;" src="Example%20jqDock_files/images.png" alt=""><div class="jqDockLabel jqDockLabelImage" style="position: absolute; margin: 0px; display: none; top: auto; left: auto; bottom: 0px; right: 0px; filter: inherit;"><ul style="filter: inherit;">
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option I1</span></a></li>
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option I2</span></a></li>
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option I3</span></a></li>
+				</ul></div></div></div><div class="jqDockItem jqDockMouse3" style="position: relative; padding: 0px; margin: 0px; border: 0px none; background-color: transparent; float: left; filter: inherit;"><div style="position: relative; padding: 0px; margin: 0px; border: 0px none; background-color: transparent; height: 60px; width: 60px; filter: inherit;"><img class="jqDockMouse3" style="position: relative; padding: 0px; margin: 0px; border-width: 0px; border-style: none; vertical-align: top; display: block; width: 100%; height: 100%; filter: inherit;" src="Example%20jqDock_files/movies.png" alt=""><div class="jqDockLabel jqDockLabelImage" style="position: absolute; margin: 0px; display: none; top: auto; left: auto; bottom: 0px; right: 0px; filter: inherit;"><ul style="filter: inherit;">
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option M1</span></a></li>
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option M2</span></a></li>
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option M3</span></a></li>
+				</ul></div></div></div><div class="jqDockItem jqDockMouse4" style="position: relative; padding: 0px; margin: 0px; border: 0px none; background-color: transparent; float: left; filter: inherit;"><div style="position: relative; padding: 0px; margin: 0px; border: 0px none; background-color: transparent; height: 60px; width: 60px; filter: inherit;"><img class="jqDockMouse4" style="position: relative; padding: 0px; margin: 0px; border-width: 0px; border-style: none; vertical-align: top; display: block; width: 100%; height: 100%; filter: inherit;" src="Example%20jqDock_files/private.png" alt=""><div class="jqDockLabel jqDockLabelImage" style="position: absolute; margin: 0px; display: none; top: auto; left: auto; bottom: 0px; right: 0px; filter: inherit;"><ul style="filter: inherit;">
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option P1</span><img style="filter: inherit;" src="Example%20jqDock_files/submenu.gif" alt=""></a>
+						<ul style="filter: inherit;">
+							<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-sub-option P1-S1</span></a></li>
+							<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-sub P1-S2</span></a></li>
+						</ul>
+					</li>
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option P2</span></a></li>
+					<li style="filter: inherit;"><a style="filter: inherit;" href="#"><span style="filter: inherit;">sub-option P3</span></a></li>
+				</ul></div></div></div></div></div></div>
+		<ul id="submenus">
+			<li><!-- Library sub-menu... -->
+				<ul>
+					<li><a href="#"><span>sub-option L1</span></a>
+						<ul>
+							<li><a href="#"><span>sub-sub-option L1-S1</span></a></li>
+							<li><a href="#"><span>sub-sub L1-S2</span></a></li>
+						</ul>
+					</li>
+					<li><a href="#"><span>sub L2</span></a></li>
+					<li><a href="#"><span>sub-option L3</span></a>
+						<ul>
+							<li><a href="#"><span>sub-sub-option L3-S1</span></a></li>
+							<li><a href="#"><span>sub-sub L3-S2</span></a></li>
+							<li><a href="#"><span>sub-sub-option L3-S3</span></a>
+								<ul>
+									<li><a href="#"><span>sub-sub-sub L3-S3-S1</span></a></li>
+									<li><a href="#"><span>sub-sub-sub L3-S3-S2</span></a></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><a href="#"><span>sub-option L4</span></a></li>
+					<li><a href="#"><span>sub-option L5</span></a></li>
+					<li><a href="#"><span>sub-option L6</span></a></li>
+				</ul>
+			</li>
+			<li><!-- Tunes sub-menu... -->
+				<ul>
+					<li><a href="#"><span>sub-option T1</span></a></li>
+					<li><a href="#"><span>sub-option T2</span></a></li>
+					<li><a href="#"><span>sub-option T3</span></a></li>
+				</ul>
+			</li>
+			<li><!-- Images sub-menu... -->
+				<ul>
+					<li><a href="#"><span>sub-option I1</span></a></li>
+					<li><a href="#"><span>sub-option I2</span></a></li>
+					<li><a href="#"><span>sub-option I3</span></a></li>
+				</ul>
+			</li>
+			<li><!-- Movies sub-menu... -->
+				<ul>
+					<li><a href="#"><span>sub-option M1</span></a></li>
+					<li><a href="#"><span>sub-option M2</span></a></li>
+					<li><a href="#"><span>sub-option M3</span></a></li>
+				</ul>
+			</li>
+			<li><!-- Private sub-menu... -->
+				<ul>
+					<li><a href="#"><span>sub-option P1</span></a>
+						<ul>
+							<li><a href="#"><span>sub-sub-option P1-S1</span></a></li>
+							<li><a href="#"><span>sub-sub P1-S2</span></a></li>
+						</ul>
+					</li>
+					<li><a href="#"><span>sub-option P2</span></a></li>
+					<li><a href="#"><span>sub-option P3</span></a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+
+
+</body></html>
