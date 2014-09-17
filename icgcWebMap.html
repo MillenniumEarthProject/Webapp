@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<html>
+  <head>
+    <title>ICGC WEB MAP</title>
+	<!-- leaflet -->
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+ <!--[if lte IE 8]>
+     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.ie.css" />
+ <![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <!-- Load Esri Leaflet from CDN -->
+	<script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/0.0.1-beta.5/esri-leaflet.js"></script>
+    <script src="js/esri_leaflet.js"></script>
+	<script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css' rel='stylesheet' />
+
+    <style>
+      html, body, #container
+      {
+        width : 100%;
+        height : 99%;
+      }
+      
+      #container, div
+      {
+		float: left;
+		/*border-style:solid; 
+		border-style:solid; 
+		border-width:5px;
+		border-color:green;*/
+      }
+      
+      #map
+      {
+        width : 75%;
+        height: 100%;
+		/*border-style:solid;
+		border-width: 5px;
+		border-color:red;*/
+      }
+      #sidecol 
+      {
+        width : 25%;
+		height: 100%;
+		border-width: 5px;
+		border-color:green;
+		overflow: scroll;
+	  }
+	  
+    </style>
+
+	 <!-- Load Leaflet from CDN-->
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+      <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	  <!-- Load Esri Leaflet from CDN -->
+	  <script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/0.0.1-beta.5/esri-leaflet.js"></script>
+      <script src="js/esri_leaflet.js"></script>
+
+  </head>
+  <body>
+  
+	<div class="btn-group btn-group-lg">
+	  <button type="button" class="btn btn-default" id="NSM" value="NSM">News</button>
+	  <button type="button" class="btn btn-default" id="SDG" value="SDG">SDG Status</button>
+	  <button type="button" class="btn btn-default" id="CMP" value ="CMP">City Models/Plans</button>
+	  <button type="button" class="btn btn-default" id="CSM" value ="CSM">Story Maps</button>
+	  <button type="button" class="btn btn-default" id="EDU" value ="EDU">Educational Games</button>
+	  <button type="button" class="btn btn-default" id="USR" value ="USR">User Submitted</button>
+	  <button type="button" class="btn btn-default" id="OPM" value ="OPM">Project Map</button>
+	  <!-- button type="button" class="btn btn-default">Create a new map</button>
+	  <button type="button" class="btn btn-default">MDG Status</button -->
+	</div>
+
+
+     <div name="container" id="container">
+		<div id="map"></div>
+        <div id="sidecol"> </div>
+	 </div>
+    <script>
+
+		var countries;
+		var buttonPicked;
+		var buttonType;
+		var data = {}, key = [], value= [];
+		var map = L.map('map',{minZoom: 2}).setView([11.505,  -0.09], 2);
+		L.esri.basemapLayer("Topographic").addTo(map);
+
+		tileURL = 'https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png'
+		featureURL = "http://dev.consciousglobalchange.org/arcgis/rest/services/MEP/noRelate_tester/FeatureServer/0"
+		mapServerURL = "http://dev.consciousglobalchange.org/arcgis/rest/services/MEP/webmap_catalog/MapServer/0"
+
+		L.tileLayer(tileURL, 
+		{
+			attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms &amp; Feedback</a>'
+		}).addTo(map);
+
+		function getStyle(feature)
+		{
+			return {border: 'black', color: 'white', weight: 2,  fillOpacity: 0.1};
+		}
+
+		function onEachFeature(feature, layer)
+		{
+			layer.on(
+			{
+				click: highlightFeature, 
+				mouseout: resetHighlight
+			});
+			data[feature.properties.title] = feature.properties.hyperlink;
+		}
+		
+		function highlightFeature(e) 
+		{
+			var layer = e.target;
+			for(var keys in data)
+			{
+				key.push(keys);
+   				value.push(keys[key]);
+			}
+
+			layer.setStyle(
+			{
+				weight: 2,
+				color: 'red',
+				fillOpacity: 0.5
+			});
+			if (!L.Browser.ie && !L.Browser.opera) 
+			{
+				layer.bringToFront();
+			}
+			
+			
+			if (layer.feature.properties && layer.feature.properties.hyperlink) 
+			{
+				$('#sidecol').empty();
+				$('#sidecol').append("<p><h3><center>COUNTRY NAME:<br>" + "<u>" + layer.feature.properties.country + "</center></u></h3>");
+			}
+			for(var keys in data)
+			{
+				if (layer.feature.properties && layer.feature.properties.hyperlink && buttonType.value == buttonPicked && data[keys]) 
+				{
+					$('#sidecol').append("<b>Abstract:</b> " + layer.feature.properties.abstract + "<br>"
+					+ "<b>Description:</b> " + layer.feature.properties.description + "<br>"
+					+ "<b>Development Goals</b> " + layer.feature.properties.dev_goal + "<br>"
+					+ "<b>Audience:</b> " + layer.feature.properties.audience + "<br>");
+					$('#sidecol').append("<b>Map Title:</b> " + keys + "<br>"
+					+ "<b>hyperlink:  </b><a href =' " + data[keys] + " ' target= _blank>click here </a> <br></p>");
+				}
+			}
+			if (layer.feature.properties && !layer.feature.properties.hyperlink) 
+			{
+				$('#sidecol').empty();
+				$('#sidecol').append('<p><h3><center> COUNTRY NAME:<br>' + '<u>' + layer.feature.properties.country + '</center></u></b>');
+			}
+
+		}
+
+		function resetHighlight(e) 
+		{
+			countries.resetStyle(e.target);
+		}
+
+
+		$('#NSM').click(function()
+		{
+			if(map.hasLayer(countries))
+			{
+				map.removeLayer(countries);
+			} 
+
+			$('#sidecol').empty();
+			data = [];
+			buttonPicked = 'NSM';
+			buttonType = document.getElementById('NSM');
+			countries = new L.esri.featureLayer(featureURL, 
+			{
+				style: getStyle, 
+				onEachFeature: onEachFeature,
+				where: "type like "+"'"+buttonType.value+"'"
+			}).addTo(map);
+		});
+
+		$('#SDG').click(function(){
+			if(map.hasLayer(countries))
+			{
+				map.removeLayer(countries);
+			} 
+
+			$('#sidecol').empty();
+			data = [];
+			buttonPicked = 'SDG';
+			buttonType = document.getElementById('SDG');
+			countries = new L.esri.featureLayer(featureURL, 
+			{
+				style: getStyle, 
+				onEachFeature: onEachFeature,
+				where: "type like "+"'"+buttonType.value+"'"
+			}).addTo(map);
+		});
+
+		$('#CMP').click(function(){
+
+			if(map.hasLayer(countries))
+			{
+				map.removeLayer(countries);
+			} 
+
+			$('#sidecol').empty();
+			data = [];
+			buttonPicked = 'CMP';
+			buttonType = document.getElementById('CMP');
+			countries = new L.esri.featureLayer(featureURL, 
+			{
+				style: getStyle, 
+				onEachFeature: onEachFeature,
+				where: "type like "+"'"+buttonType.value+"'"
+			}).addTo(map);
+		});
+
+		$('#CSM').click(function(){
+
+			if(map.hasLayer(countries))
+			{
+				map.removeLayer(countries);
+			} 
+
+			$('#sidecol').empty();
+			data = [];
+			buttonPicked = 'CSM';
+			buttonType = document.getElementById('CSM');
+			countries = new L.esri.featureLayer(featureURL, 
+			{
+				style: getStyle, 
+				onEachFeature: onEachFeature,
+				where: "type like "+"'"+buttonType.value+"'"
+			}).addTo(map);
+		});
+
+		$('#EDU').click(function(){
+
+			if(map.hasLayer(countries))
+			{
+				map.removeLayer(countries);
+			} 
+
+			$('#sidecol').empty();
+			data = [];
+			buttonPicked = 'EDU';
+			buttonType = document.getElementById('EDU');
+			countries = new L.esri.featureLayer(featureURL, 
+			{
+				style: getStyle, 
+				onEachFeature: onEachFeature,
+				where: "type like "+"'"+buttonType.value+"'"
+			}).addTo(map);
+		});
+
+		$('#USR').click(function(){
+
+			if(map.hasLayer(countries))
+			{
+				map.removeLayer(countries);
+			} 
+
+			$('#sidecol').empty();
+			data = [];
+			buttonPicked = 'USR';
+			buttonType = document.getElementById('USR');
+			countries = new L.esri.featureLayer(featureURL, 
+			{
+				style: getStyle, 
+				onEachFeature: onEachFeature,
+				where: "type like "+"'"+buttonType.value+"'"
+			}).addTo(map);
+		});
+
+		$('#OPM').click(function(){
+
+			if(map.hasLayer(countries))
+			{
+				map.removeLayer(countries);
+			} 
+
+			$('#sidecol').empty();
+			data = [];
+			buttonPicked = 'OPM';
+			buttonType = document.getElementById('OPM');
+			countries = new L.esri.featureLayer(featureURL, 
+			{
+				style: getStyle, 
+				onEachFeature: onEachFeature,
+				where: "type like "+"'"+buttonType.value+"'"
+			}).addTo(map);
+		});
+
+	</script>
+  </body>
+</html>
