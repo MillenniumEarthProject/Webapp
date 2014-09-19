@@ -1,0 +1,68 @@
+html, body {
+	background-color: #FFFFFF;
+	width: 99%;
+	height: 99%;
+	margin: 0px;
+}
+
+#map{ 
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%; 
+	width: 100%; 
+}
+
+#divTitle{
+	width:730px;
+	margin: 10px auto;
+}
+.divKwickInner {
+	padding:5px;	
+	float:left;
+}
+
+.divKwickImage {
+	font-size: x-large;
+	font-weight: bold;
+}
+
+.divKwickContent{
+	float:right;
+	padding:5px;
+}
+
+/* TITLE MENU ANIMATION */
+
+.kwicks {
+	display: block;
+	list-style-type: none;
+	list-style: none;
+	position: relative;
+	margin: 0;
+	padding: 0;
+}
+.kwicks > * {
+	display: block;
+	overflow: hidden;
+	padding: 0px;
+	margin: 0;
+	
+	width: 85px;
+	height: 80px;
+	background-color: #FFFFFF;
+	color: black;
+}
+.kwicks.kwicks-processed > * {
+	margin: 0;
+	position: absolute;
+}
+.kwicks-horizontal > * {
+	float: left;
+}
+.kwicks-horizontal > :first-child {
+	margin-left: 0;
+}
+.kwicks-vertical > :first-child {
+	margin-top: 0;
+}

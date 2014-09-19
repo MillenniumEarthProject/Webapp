@@ -1,0 +1,64 @@
+<html>    
+  <head> 
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>             
+	<script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn-history/r432/trunk/arcgislink/src/arcgislink.js"></script>  
+	
+	<style type="text/css">
+		html, body {width: 100%; height: 100%; margin: 0px}
+		body {margin: 0px}
+		.divMap{ height: 100%; width: 100%; }
+	</style>
+    
+    <script type="text/javascript">
+		var map;
+		google.maps.event.addDomListener(window, 'load', init);
+	
+		function init() {
+			var maptypeids = [];// [google.maps.MapTypeId.ROADMAP];
+			var mapOptions = {
+				zoom: 15,
+				center: new google.maps.LatLng(40.2438,-74.3774),
+				mapTypeControl: true,
+				mapTypeControlOptions: {
+					mapTypeIds: maptypeids,
+					position: google.maps.ControlPosition.BOTTOM_LEFT
+				}
+			};
+
+			map = new google.maps.Map(document.getElementById('divMap'), mapOptions);
+/*
+			//ESRI Topos in LL
+			var esriurl1 = 'http://services.arcgisonline.com/ArcGIS/rest/services/USA_Topo_Maps/MapServer';
+			var svc = new gmaps.ags.MapService(esriurl1);
+			google.maps.event.addListenerOnce(svc, 'load', function() {
+				maptypeids.push('topo');
+				var topoMapType = new gmaps.ags.MapType(esriurl1, { name: 'Topographic' });
+				map.mapTypes.set('topo', topoMapType);
+				map.setMapTypeId('topo');
+			});
+*/
+			
+			//NJ State Plane
+			var njwkid = '3424';
+			var njspft = 'PROJCS["NAD_1983_StatePlane_New_Jersey_FIPS_2900_Feet",GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Transverse_Mercator"],PARAMETER["False_Easting",492125.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",-74.5],PARAMETER["Scale_Factor",0.9999],PARAMETER["Latitude_Of_Origin",38.83333333333334],UNIT["Foot_US",0.3048006096012192]]';
+			var njurl = 'http://njgin.state.nj.us/ArcGIS/rest/services/Basemap/top/MapServer';
+			var svcnj = new gmaps.ags.MapService(njurl);
+			google.maps.event.addListenerOnce(svcnj, 'load', function() {
+				var srparams = {wkid: njwkid, wkt: njspft};
+				gmaps.ags.SpatialReference(srparams);
+				maptypeids.push('njsp');
+				var tileLayer = new gmaps.ags.TileLayer(svcnj);
+				var spMapType = new gmaps.ags.MapType(tileLayer, { name: 'NJ Basemap' });		
+				map.mapTypes.set('njsp', spMapType);
+				map.setMapTypeId('njsp');
+			});
+		}
+		
+    </script>
+	
+	<body>
+		<div id="divMap" class="divMap"></div>
+	</body>
+</html>

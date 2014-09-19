@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Example jqDock</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel='stylesheet' type='text/css' href='example.css' />
+<script type='text/javascript' src='http://code.jquery.com/jquery-latest.min.js'></script>
+<script type='text/javascript' src='jquery.jqDock.min.js'></script>
+<script type='text/javascript' src='example.js'></script>
+<style type='text/css'>
+	/*position and hide the menu initially - leave room for menu items to expand...*/
+	#page {padding-top:160px; padding-bottom:20px; width:100%;}
+	#menu {position:absolute; top:0; left:0; width:100%; display:none;}
+	/*hide the submenus...*/
+	#submenus {display:none;}
+/*dock styling...*/
+	/*...centre the dock...*/
+	#menu div.jqDockWrap {margin:0 auto;}
+	/*...set the cursor...*/
+	#menu div.jqDock {cursor:pointer;}
+/*label styling...*/
+	/*this is actually the sub-menu positioning and styling...*/
+	.jqDockLabel {z-index:999;}
+	.jqDockLabel ul {position:absolute; top:-20px; right:2px; padding:0; margin:0;
+		list-style-type:none; white-space:nowrap; background-color:#ff9900; border:2px solid #666666;}
+	.jqDockLabel li {position:relative; border:0 none; padding:0; margin:0;}
+	.jqDockLabel li a {display:block; height:18px; line-height:18px; outline:0 none; position:relative;}
+	.jqDockLabel li a.clicked {background-color:#ffff00;}
+	.jqDockLabel li a:hover {background-color:#0000cc; color:#ffffff;}
+	.jqDockLabel li a.clicked:hover {background-color:#0066cc; color:#ffffff;}
+	.jqDockLabel li a span {padding:0 15px 0 5px; display:block;}
+	.jqDockLabel a img {position:absolute; top:4px; right:0;}
+	/*...and sub-sub-menus...*/
+	.jqDockLabel ul ul {left:100%; top:-2px; right:auto; display:none;}
+</style>
+<script type='text/javascript'>
+jQuery(document).ready(function($){
+	// set up the options to be used for jqDock...
+	var dockOptions =
+		{ align: 'top' // horizontal menu, with expansion DOWN from a fixed TOP edge
+		, size: 60 //increase 'at rest' size to 60px
+		, labels: true  // add labels (defaults to 'br')
+		, setLabel: function(txt, i, el){
+				//append a clone of the relevant sub-menu to the label, div.jqDockLabel...
+				//Note that I don't need to add the inner wrapper - div.jqDockLabelText - 
+				//because I can reposition the sub-menus within div.jqDockLabel itself
+				$(el).append($('#submenus>li>ul').eq(i).clone(true))
+					//...and intercept mousemoves to prevent propagation and stop
+					//the dock resizing as the cursor moves over the sub-menus...
+					.bind('mousemove', function(){ 
+						return false; 
+					})
+					//put a one-off mouseenter on every sub-menu to (re)set
+					//contained anchor widths...
+					.find('ul').one('mouseenter', function(){
+						$('>li>a', this).each(function(){
+								$(this).width($(this).parent().width());
+							});
+						return false;
+					}).end()
+					//for this example, put a click handler on every sub-menu anchor
+					//that simply toggles a class to change background colour...
+					.find('a').click(function(){
+						$(this).toggleClass('clicked');
+						this.blur();
+						return false;
+					})
+					//put a hover on any sub-menu LI that has a child menu, to show/hide
+					//that child menu; and allow mouseleave to propagate up so that coming
+					//completely off the sub-menu structure will still collapse the dock...
+					.next('ul').parent().hover(function(ev){
+						var mLeave = ev.type == 'mouseleave';
+						$('>ul', this)[mLeave ? 'hide' : 'show']();
+						return mLeave;
+					})
+					//add a visual indicator that a child menu exists...
+					.find('>a').append("<"+"img src='images/submenu.gif' alt='' />");
+				return false;
+			}
+		};
+	// ...and apply...
+	$('#menu').jqDock(dockOptions);
+});
+</script>
+</head>
+<body>
+	<div id='page'>
+		<div id='menu'>
+			<img src='images/library.png' title='Library' alt='' />
+			<img src='images/tunes.png' title='Tunes' alt='' />
+			<img src='images/images.png' title='Images' alt='' />
+			<img src='images/movies.png' title='Movies' alt='' />
+			<img src='images/private.png' title='Private' alt='' />
+		</div>
+		<ul id='submenus'>
+			<li><!-- Library sub-menu... -->
+				<ul>
+					<li><a href='#'><span>sub-option L1</span></a>
+						<ul>
+							<li><a href='#'><span>sub-sub-option L1-S1</span></a></li>
+							<li><a href='#'><span>sub-sub L1-S2</span></a></li>
+						</ul>
+					</li>
+					<li><a href='#'><span>sub L2</span></a></li>
+					<li><a href='#'><span>sub-option L3</span></a>
+						<ul>
+							<li><a href='#'><span>sub-sub-option L3-S1</span></a></li>
+							<li><a href='#'><span>sub-sub L3-S2</span></a></li>
+							<li><a href='#'><span>sub-sub-option L3-S3</span></a>
+								<ul>
+									<li><a href='#'><span>sub-sub-sub L3-S3-S1</span></a></li>
+									<li><a href='#'><span>sub-sub-sub L3-S3-S2</span></a></li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li><a href='#'><span>sub-option L4</span></a></li>
+					<li><a href='#'><span>sub-option L5</span></a></li>
+					<li><a href='#'><span>sub-option L6</span></a></li>
+				</ul>
+			</li>
+			<li><!-- Tunes sub-menu... -->
+				<ul>
+					<li><a href='#'><span>sub-option T1</span></a></li>
+					<li><a href='#'><span>sub-option T2</span></a></li>
+					<li><a href='#'><span>sub-option T3</span></a></li>
+				</ul>
+			</li>
+			<li><!-- Images sub-menu... -->
+				<ul>
+					<li><a href='#'><span>sub-option I1</span></a></li>
+					<li><a href='#'><span>sub-option I2</span></a></li>
+					<li><a href='#'><span>sub-option I3</span></a></li>
+				</ul>
+			</li>
+			<li><!-- Movies sub-menu... -->
+				<ul>
+					<li><a href='#'><span>sub-option M1</span></a></li>
+					<li><a href='#'><span>sub-option M2</span></a></li>
+					<li><a href='#'><span>sub-option M3</span></a></li>
+				</ul>
+			</li>
+			<li><!-- Private sub-menu... -->
+				<ul>
+					<li><a href='#'><span>sub-option P1</span></a>
+						<ul>
+							<li><a href='#'><span>sub-sub-option P1-S1</span></a></li>
+							<li><a href='#'><span>sub-sub P1-S2</span></a></li>
+						</ul>
+					</li>
+					<li><a href='#'><span>sub-option P2</span></a></li>
+					<li><a href='#'><span>sub-option P3</span></a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</body>
+</html>
