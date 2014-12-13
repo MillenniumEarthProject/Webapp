@@ -32,6 +32,14 @@ html, body {
 	padding:5px;
 }
 
+.btnHyperlink {
+    background:none;
+    border:0;
+    text-decoration:underline;
+    color:blue;
+    cursor:pointer
+}
+
 /* TITLE MENU ANIMATION */
 
 .kwicks {
