@@ -31,91 +31,6 @@
     <!-- General CSS -->
     <link rel="stylesheet" type="text/css" href="css/main.css" />
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            border: 0;
-            overflow: hidden;
-            height: 100%;
-            max-height: 100%;
-        }
-
-        #sidecol {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            right: 0;
-            width: 300px; /*Width of frame div*/
-            height: 100%;
-            overflow: auto;
-            background: #686868;
-            color: white;
-            border-left-width: thick;
-            border-left-color: white;
-            border-left-style: solid;
-        }
-
-        #map {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 305px; /*Set right value to WidthOfFrameDiv*/
-            bottom: 0;
-            overflow: hidden;
-            background: #fff;
-        }
-
-        #topsection {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 305px; /*Set right value to WidthOfFrameDiv*/
-            background: #EAEAEA;
-            height: 35px; /*Height of top section*/
-        }
-
-        .innertube {
-            margin: 7px; /*Margins for inner DIV inside each DIV (to provide padding)*/
-        }
-
-        .title {
-            text-transform: uppercase;
-            font-weight: bold;
-            font-size: 17px;
-            /*background-color: #b0e0e6;*/
-        }
-
-        .abstract {
-            text-transform: capitalize;
-            font-size: 15px;
-            font-style: italic;
-            /*background-color: #b0e0e6;*/
-        }
-
-        .others {
-            text-transform: capitalize;
-            font-weight: bold;
-            font-size: 15px;
-            /*background-color: #b0e0e6;*/
-        }
-
-        .center {
-            font-weight: bold;
-            margin-left: auto;
-            margin-right: auto;
-            width: 100%;
-            /*background-color: #b0e0e6;*/
-        }
-    </style>
-
-    <script>
-    $(document).ready(function () {
-        //basemap();
-        //buttonPick(map);
-    }); //end of ready
-    </script>
-
 </head>
 
 <body>
@@ -229,6 +144,7 @@
         </ul>
     </div>
 
+	<!--DATA QUERY WIRING-->
     <script>
         var countries;
         var admin;
@@ -333,7 +249,7 @@
             buttonPicked = 'NSM';
             buttonType = document.getElementById('NSM');
 
-            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.value + "'");
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
             var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
             query.ids(function (error, ids, response) {
                 if (ids === null) {
@@ -386,7 +302,7 @@
             buttonPicked = 'SDG';
             buttonType = document.getElementById('SDG');
 
-            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.value + "'");
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
             var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
             query.ids(function (error, ids, response) {
                 console.log(ids.length);
@@ -442,7 +358,7 @@
             buttonPicked = 'CMP';
             buttonType = document.getElementById('CMP');
 
-            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.value + "'");
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
             var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
             query.ids(function (error, ids, response) {
                 if (ids === null) {
@@ -496,7 +412,7 @@
             buttonPicked = 'CSM';
             buttonType = document.getElementById('CSM');
 
-            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.value + "'");
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
             var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
             query.ids(function (error, ids, response) {
                 if (ids === null) {
@@ -550,7 +466,7 @@
             buttonPicked = 'EDU';
             buttonType = document.getElementById('EDU');
 
-            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.value + "'");
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
             var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
             query.ids(function (error, ids, response) {
                 console.log(ids);
@@ -605,7 +521,7 @@
             buttonPicked = 'USR';
             buttonType = document.getElementById('USR');
 
-            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.value + "'");
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
             var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
             query.ids(function (error, ids, response) {
                 if (ids === null) {
@@ -658,7 +574,7 @@
             buttonPicked = 'OPM';
             buttonType = document.getElementById('OPM');
 
-            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.value + "'");
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
             var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
             query.ids(function (error, ids, response) {
                 if (ids === null) {
