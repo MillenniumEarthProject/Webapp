@@ -1,204 +1,651 @@
 ﻿<!DOCTYPE html>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <html>
-    
-    <head>
-        <title>Esri Leaflet Demo</title>
-        <!-- leaflet -->
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
-        <!--[if lte IE 8]>
-            <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.ie.css" />
-        <![endif]-->
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<head>
+    <title>ICGC WEB PORTAL</title>
 
-        <script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
-        <script type="text/javascript" src="js/jquery.kwicks-1.5.1.js"></script>
-        <script type="text/javascript" src="js/jquery.corner.js"></script>
-        <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <!-- leaflet -->
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
 
-        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-        <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js'></script>
-        <link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css' rel='stylesheet' />
-	
-        <!-- Load Leaflet from CDN-->
-        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
-        <!-- Load Esri Leaflet from CDN -->
-        <script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/0.0.1-beta.5/esri-leaflet.js"></script>
-        <script src="js/esri_leaflet.js"></script>
-    </head>
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.ie.css" />
+    <![endif]-->
 
-    <body>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
+    <!-- Load Esri Leaflet from CDN -->
+    <script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/1.0.0-rc.3/esri-leaflet.js"></script>
+    <script src="js/esri-leaflet-related.js"></script>
+    <script src="http://fgnass.github.io/spin.js/spin.min.js"></script>
+    <script src="http://fgnass.github.io/spin.js/jquery.spin.js"></script>
+    <link rel="stylesheet" href="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.css" />
+    <script src="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.js"></script>
+
+    <!-- JS for KWICK Buttons -->
+    <script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
+    <script type="text/javascript" src="js/jquery.kwicks-1.5.1.js"></script>
+    <script type="text/javascript" src="js/jquery.corner.js"></script>
+
+    <!-- General CSS -->
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+
+</head>
+
+<body>
+
+    <div name="container" id="container">
         <div id="map"></div>
-      
-        <div id='divTitle'>
-            <ul class="kwicks horizontal">
-                <li>
-                    <div class='divKwickInner'>
-                        <div class='divKwickImage'><img src="image/news.png" alt="News" /></div>
-                        <div class='divKwickTitle'>News and Updates</div>
-                    </div>
-                </li>
-                <li>
-                    <div class='divKwickInner'>
-                        <div class='divKwickImage'><img src="image/target.png" alt="MDG Status" /></div>
-                        <div class='divKwickTitle'>SDG Status</div>
-                    </div>
-
-                    <div class='divKwickContent'>
-                        <div><input type="checkbox" onclick="showMDG1();">World Bank MDG 1</div>
-                        <div><input type="checkbox" onclick="showMDG1();">World Bank MDG 2</div>
-                        <div><input type="checkbox" onclick="showMDG1();">World Bank MDG 3</div>
-                    </div>
-                </li>
-                <li>
-                    <div class='divKwickInner'>
-                        <div class='divKwickImage'><img src="image/develop.png" alt="Development" /></div>
-                        <div class='divKwickTitle'>City Models/Development Plans</div>
-                    </div>
-                </li>
-
-                <li>
-                    <div class='divKwickInner'>
-                        <div class='divKwickImage'><img src="image/maps.png" alt="Maps" /></div>
-                        <div class='divKwickTitle'>Story Maps</div>
-                    </div>
-                </li>
-                <li>
-                    <div class='divKwickInner'>
-                        <div class='divKwickImage'><img src="image/games.png" alt="Games" /></div>
-                        <div class='divKwickTitle'>Educational Games</div>
-                    </div>
-                </li>
-                <li>
-                    <div class='divKwickInner'>
-                        <div class='divKwickImage'><img src="image/users.png" alt="Users" /></div>
-                        <div class='divKwickTitle'>User Submitted</div>
-                    </div>
-                </li>
-                <li>
-                    <div class='divKwickInner'>
-                        <div class='divKwickImage'><img src="image/network.png" alt="Organizations" /></div>
-                        <div class='divKwickTitle'>Organizations</div>
-                    </div>
-                </li>
-                <li id='liKwikLast'>
-                    <div class='divKwickInner'>
-                        <div class='divKwickImage'><img src="image/addmap.png" alt="Add Map" /></div>
-                        <div class='divKwickTitle'>Create a new Map</div>
-                    </div>
-                </li>
-            </ul>
+        <div id="sidecol">
+            <div id="sidecol" class="innertube"></div>
         </div>
+    </div>
 
-      
-        <script>
+    <div id='divTitle'>
+        <ul class="kwicks horizontal">
+            <!--NEWS-->
+            <li>
+                <div class='divKwickInner'>
+                    <div class='divKwickImage'><img src="image/news.png" alt="News" /></div>
+                    <div class='divKwickTitle'>News and Updates</div>
+                </div>
 
-            var map = L.map('map',{minZoom: 2}).setView([11.505,  -0.09], 2);
-            L.esri.basemapLayer("Topographic").addTo(map);
+                <div class='divKwickContent'>
+                    <div>
+                        <button type="button" class="btn btn-default btnHyperlink" id="NSM" value="NSM">News</button>
+                    </div>
+                </div>
+            </li>
 
-            tileURL = 'https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png'
-            featureURL = "http://dev.consciousglobalchange.org/arcgis/rest/services/MEP/noRelate_tester/FeatureServer/0"
-            mapServerURL = "http://dev.consciousglobalchange.org/arcgis/rest/services/MEP/webmap_catalog/MapServer/0"
+            <!--STATUS-->
+            <li>
+                <div class='divKwickInner'>
+                    <div class='divKwickImage'><img src="image/target.png" alt="SDG Status" /></div>
+                    <div class='divKwickTitle'>SDG Status</div>
+                </div>
 
-            L.tileLayer(tileURL, 
+                <div class='divKwickContent'>
+                    <div>
+                        <button type="button" class="btn btn-default btnHyperlink" id="SDG" value="SDG">SDG Status</button>
+                    </div>
+                </div>
+            </li>
+
+            <!--CITY-MODELS PLANS-->
+            <li>
+                <div class='divKwickInner'>
+                    <div class='divKwickImage'><img src="image/develop.png" alt="Plans" /></div>
+                    <div class='divKwickTitle'>City Models/Plans</div>
+                </div>
+
+                <div class='divKwickContent'>
+                    <div>
+                        <button type="button" class="btn btn-default btnHyperlink" id="CMP" value="CMP">Models/Plans</button>
+                    </div>
+                </div>
+            </li>
+
+            <!--STORY MAPS-->
+            <li>
+                <div class='divKwickInner'>
+                    <div class='divKwickImage'><img src="image/maps.png" alt="Maps" /></div>
+                    <div class='divKwickTitle'>Story Maps</div>
+                </div>
+
+                <div class='divKwickContent'>
+                    <div>
+                        <button type="button" class="btn btn-default btnHyperlink" id="CSM" value="CSM">Story Maps</button>
+                    </div>
+                </div>
+            </li>
+
+            <!--GAMES-->
+            <li>
+                <div class='divKwickInner'>
+                    <div class='divKwickImage'><img src="image/games.png" alt="Educational" /></div>
+                    <div class='divKwickTitle'>Educational Games</div>
+                </div>
+
+                <div class='divKwickContent'>
+                    <div>
+                        <button type="button" class="btn btn-default btnHyperlink" id="EDU" value="EDU">Games</button>
+                    </div>
+                </div>
+            </li>
+
+            <!--SUBMITTED-->
+            <li>
+                <div class='divKwickInner'>
+                    <div class='divKwickImage'><img src="image/users.png" alt="Users" /></div>
+                    <div class='divKwickTitle'>User Submitted</div>
+                </div>
+
+                <div class='divKwickContent'>
+                    <div>
+                        <button type="button" class="btn btn-default btnHyperlink" id="USR" value="USR">User Submitted</button>
+                    </div>
+                </div>
+            </li>
+
+            <!--PROJECT MAP-->
+            <li>
+                <div class='divKwickInner'>
+                    <div class='divKwickImage'><img src="image/network.png" alt="Organizations" /></div>
+                    <div class='divKwickTitle'>Project Maps</div>
+                </div>
+                <div class='divKwickContent'>
+                    <div>
+                        <button id="OPM" class="btn btn-default btnHyperlink" value="OPM" type="button">Project Map</button>
+                    </div>
+                </div>
+            </li>
+
+        </ul>
+    </div>
+
+	<!--DATA QUERY WIRING-->
+    <script>
+        var countries;
+        var admin;
+        var buttonPicked;
+        var buttonType;
+        var data = {}, key = [], value = [];
+        var map = L.map('map', { minZoom: 2 }).setView([11.505, -0.09], 2);
+
+        var loadingControl = L.Control.loading({
+            spinjs: true
+        });
+        map.addControl(loadingControl);
+        //L.esri.basemapLayer("Topographic").addTo(map);
+
+        var tileURL = 'https://dnv9my2eseobd.cloudfront.net/v3/cartodb.map-4xtxp73f/{z}/{x}/{y}.png'
+        var featureURL = "http://dev.consciousglobalchange.org/arcgis/rest/services/MEP/webmap_catalog/FeatureServer/0"
+        var tableURL = "http://dev.consciousglobalchange.org/arcgis/rest/services/MEP/webmap_catalog/FeatureServer/1";
+
+        L.tileLayer(tileURL,
+        {
+            attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms &amp; Feedback</a>'
+        }).addTo(map);
+
+        function getStyle(feature) {
+            return { border: 'black', color: 'white', weight: 2, fillOpacity: 0.1 };
+        }
+
+        function onEachFeature(feature, layer) {
+            layer.on(
             {
-                attribution: 'Mapbox <a href="http://mapbox.com/about/maps" target="_blank">Terms &amp; Feedback</a>'
-            }).addTo(map);
+                click: highlightFeature,
+                mouseout: resetHighlight
+            });
+        }
 
-            var countries = L.esri.featureLayer(featureURL, 
+        function highlightFeature(e) {
+            var layer = e.target;
+            layer.setStyle(
             {
-                style: function (feature) 
-                {
-                    return getStyle(feature);
-                },
-
-                onEachFeature: function(geojson, layer)
-                {
-                    if (geojson.properties && geojson.properties.hyperlink) 
-                    {
-                        layer.bindPopup( 
-                            "<h3><b>Country:</b> " + "<u>" + geojson.properties.CNTRY_NAME + "</u></h3><br>"
-                            + "<b>Map Title:</b> " + geojson.properties.map_title + "<br>"
-                            + "<b>Abstract:</b> " + geojson.properties.abstract + "<br>"
-                            + "<b>Description:</b> " + geojson.properties.description + "<br>"
-                            + "<b>Development Goals</b> " + geojson.properties.dev_goals + "<br>"
-                            + "<b>Audience:</b> " + geojson.properties.audience + "<br>"
-                            + "<b>hyperlink:</b> " + geojson.properties.hyperlink + "<br>");
-                    }
-                    if (geojson.properties && !geojson.properties.hyperlink) 
-                    {layer.bindPopup("<h3><b>Country:</b> " + "<u>" + geojson.properties.CNTRY_NAME + "</u></h3><br>");}
-                    layer.on(
-                    {
-                        mouseover: highlightFeature,
-                        mouseout: resetHighlight
+                weight: 2,
+                color: 'red',
+                fillOpacity: 0.5
+            });
+            if (!L.Browser.ie && !L.Browser.opera) {
+                layer.bringToFront();
+            }
+            //console.log(layer.feature.properties.NAME);
+            $('#sidecol').empty();
+            $('#sidecol').html('<center><p class="title">' + layer.feature.properties.NAME + '</center></p>');
+            var xquery = L.esri.Tasks.query(featureURL).where("OBJECTID like '" + layer.feature.properties.OBJECTID + "'");
+            var rxquery = L.esri.Tasks.queryRelated(featureURL).relationshipId("0");
+            xquery.ids(function (error, ids, response) {
+                rxquery.objectIds([ids.join(',')]);
+                rxquery.run(function (error, featureCollection, response) {
+                    $('#sidecolcontent').empty();
+                    //------ REMOVE DUPELICATE OBJECTIDS-----------------------
+                    var xunique = {};
+                    var xdistinctFeatures = featureCollection.features.filter(function (feature) {
+                        var xoid = feature.properties.OBJECTID;
+                        if (!xunique[xoid]) {
+                            xunique[xoid] = xoid;
+                            return true;
+                        }
+                        return false;
                     });
+                    featureCollection.features = xdistinctFeatures;
+                    //-------------------------------------------------------
+                    data = featureCollection.features
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].properties.type == buttonPicked) {
+                            $('#sidecol').append("<hr><br>" +
+                            "<center><p class='title'>" + data[i].properties.title + "</p></center>"
+                            + "<i><p class='abstract'>" + data[i].properties.abstract + "</p></i>"
+                            + "<p class='others'>Development Goals:&nbsp&nbsp&nbsp&nbsp" + data[i].properties.dev_goal + "<br>"
+                            + "Audience:</b>&nbsp&nbsp&nbsp&nbsp" + data[i].properties.audience + "<br>"
+                            + "hyperlink:&nbsp&nbsp&nbsp&nbsp <a href =' " + data[i].properties.hyperlink + " ' target= _blank>click here </a></p>");
+                        }
+                    }
+                    if (data.properties && !data.properties.hyperlink) {
+                        $('#sidecol').empty();
+                        //						$('#sidecol').append('<p><h3><center> COUNTRY NAME:<br>' + '<u>' + layer.feature.properties.country + '</center></u></b>');
+                    }
+                }) //xrquery.run
+            }) //xquery.ids
+        } //hghlghtFeature
+
+        function resetHighlight(e) {
+            var layer = e.target;
+            //countries.resetStyle(e.target);
+            layer.setStyle({ border: 'black', color: 'white', weight: 2, fillOpacity: 0.1 });
+        }
+
+        //----------------------------------1---------------------------
+        $('#NSM').click(function () {
+            var nsmcntryids = new Array();
+            if (map.hasLayer(countries)) {
+                map.removeLayer(countries);
+                getStyle();
+            }
+            $('#sidecol').empty();
+            $('#sidecol').html('<center><h4>Querying...</h4></center>');
+            buttonPicked = 'NSM';
+            buttonType = document.getElementById('NSM');
+
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
+            var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
+            query.ids(function (error, ids, response) {
+                if (ids === null) {
+                    $('#sidecol').html('<center><h1>No Country Code in Table</h1></center>');
+                    return false;
                 }
-            }).addTo(map);
-
-            function getStyle(feature)
-            {
-//			return {color: "#70ca49", weight: 2,  fillOpacity: 0.3};
-                return {color: 'grey', weight: 2,  fillOpacity: 0.1};
-            }
-
-            function highlightFeature(e) 
-            {
-                var layer = e.target;
-		
-                layer.setStyle(
-                {
-                    weight: 2,
-                    color: 'red',
-                    fillOpacity: 0.5
-                });
-                if (!L.Browser.ie && !L.Browser.opera) 
-                {
-                    layer.bringToFront();
+                else if (ids.length === 0) {
+                    $('#sidecol').html('<center><h1>No Country Code in Table</h1></center>');
+                    return false;
                 }
+                rquery.objectIds([ids.join(',')]);
+                rquery.run(function (error, featureCollection, response) {
+                    if (featureCollection.features.length === 0) {
+                        $('#sidecol').html('<center><h1>No Countries Found</h1></center>');
+                        return false;
+                    }
+                    //------ REMOVE DUPELICATE OBJECTIDS-----------------------
+                    var unique = {};
+                    var distinctFeatures = featureCollection.features.filter(function (feature) {
+                        var oid = feature.properties.OBJECTID;
+                        if (!unique[oid]) {
+                            unique[oid] = oid;
+                            return true;
+                        }
+                        return false;
+                    });
+                    featureCollection.features = distinctFeatures;
+                    //-------------------------------------------------------
+                    countries = L.geoJson(featureCollection,
+                    {
+                        style: getStyle,
+                        onEachFeature: onEachFeature
+                    }).addTo(map);
+                    //$('#sidecol').html('Done');
+                    $('#sidecol').html('<center><h4>Click on Highlighted Country for more information</h4></center>');
+                    map.fitBounds(countries.getBounds().pad(0.5));
+                }); //rquery.run
+            }); //query
+        }) //click
+
+
+        //---------------------------------2------------------------
+        $('#SDG').click(function () {
+            if (map.hasLayer(countries)) {
+                map.removeLayer(countries);
+                getStyle();
             }
+            $('#sidecol').empty();
+            $('#sidecol').html('<center><h4>Querying...</h4></center>');
+            buttonPicked = 'SDG';
+            buttonType = document.getElementById('SDG');
 
-            function resetHighlight(e) 
-            {
-                countries.resetStyle(e.target);
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
+            var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
+            query.ids(function (error, ids, response) {
+                console.log(ids.length);
+                console.log(ids);
+                if (ids === null) {
+                    $('#sidecol').html('<center><h4>No Country Code in Table</h4></center>');
+                    return false;
+                }
+                else if (ids.length === 0) {
+                    $('#sidecol').html('<center><h4>No Country in Table</h4></center>');
+                    return false;
+                }
+                rquery.objectIds([ids.join(',')]);
+                rquery.run(function (error, featureCollection, response) {
+                    if (featureCollection.features.length === 0) {
+                        $('#sidecol').html('<center><h4>No Countries Found</h4></center>');
+                        return false;
+                    }
+
+                    //------ REMOVE DUPELICATE OBJECTIDS-----------------------
+                    var unique = {};
+                    var distinctFeatures = featureCollection.features.filter(function (feature) {
+                        var oid = feature.properties.OBJECTID;
+                        if (!unique[oid]) {
+                            unique[oid] = oid;
+                            return true;
+                        }
+                        return false;
+                    });
+                    featureCollection.features = distinctFeatures;
+                    //-------------------------------------------------------
+                    countries = L.geoJson(featureCollection,
+                    {
+                        style: getStyle,
+                        onEachFeature: onEachFeature
+                    }).addTo(map);
+                    //$('#sidecolcontent').html('Done');
+                    $('#sidecol').html('<center><h4>Click on Highlighted Country for more information</h4></center>');
+                    map.fitBounds(countries.getBounds().pad(0.5));
+                }); //rquery.run
+            }); //query
+        }) //click
+
+        //------------------------------------3---------------------
+        $('#CMP').click(function () {
+            var nsmcntryids = new Array();
+            if (map.hasLayer(countries)) {
+                map.removeLayer(countries);
+                getStyle();
             }
-		
+            $('#sidecol').empty();
+            $('#sidecol').html('<center><h4>Querying</h4></center>');
+            buttonPicked = 'CMP';
+            buttonType = document.getElementById('CMP');
 
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
+            var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
+            query.ids(function (error, ids, response) {
+                if (ids === null) {
+                    $('#sidecol').html('<center><h4>No Country Code in Table</h4></center>');
+                    return false;
+                }
+                else if (ids.length === 0) {
+                    $('#sidecol').html('<center><h4>No Country Code in Table<h4></center>');
+                    return false;
+                }
+                rquery.objectIds([ids.join(',')]);
+                rquery.run(function (error, featureCollection, response) {
+                    if (featureCollection.features.length === 0) {
+                        $('#sidecol').html('<center><h4>No Countries Found</h4></center>');
+                        return false;
+                    }
 
-        </script>
+                    //------ REMOVE DUPELICATE OBJECTIDS-----------------------
+                    var unique = {};
+                    var distinctFeatures = featureCollection.features.filter(function (feature) {
+                        var oid = feature.properties.OBJECTID;
+                        if (!unique[oid]) {
+                            unique[oid] = oid;
+                            return true;
+                        }
+                        return false;
+                    });
+                    featureCollection.features = distinctFeatures;
+                    //-------------------------------------------------------
+                    countries = L.geoJson(featureCollection,
+                    {
+                        style: getStyle,
+                        onEachFeature: onEachFeature
+                    }).addTo(map);
+                    //$('#sidecolcontent').html('Done');
+                    $('#sidecol').html('<center><h4>Click on Highlighted Country for more information</h4></center>');
+                    map.fitBounds(countries.getBounds().pad(0.5));
+                }); //rquery.run
+            }); //query
+        }) //click
 
-        <script type="text/javascript">
-            $().ready(function () {
-                $('.kwicks').kwicks({
-                    max: 275,
-                    spacing: 10,
-                });
+        //-----------------------------4----------------------------
+        $('#CSM').click(function () {
+            if (map.hasLayer(countries)) {
+                map.removeLayer(countries);
+                getStyle();
+            }
+            $('#sidecol').empty();
+            $('#sidecol').html('Querying...');
+            $('#sidecol').html('<center><h4>Querying....</h4></center>');
+            buttonPicked = 'CSM';
+            buttonType = document.getElementById('CSM');
 
-                $('ul.kwicks').find('li').each(function (index) {
-                    $(this).corner();
-                    $(this).find("div.divKwickTitle").hide();
-                    $(this).find("div.divKwickContent").hide();
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
+            var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
+            query.ids(function (error, ids, response) {
+                if (ids === null) {
+                    $('#sidecol').html('<center><h4>No Country Code In Table</h4></center>');
+                    return false;
+                }
+                else if (ids.length === 0) {
+                    $('#sidecol').html('<center><h4>No Country Code In Table</h4></center>');
+                    return false;
+                }
+                rquery.objectIds([ids.join(',')]);
+                rquery.run(function (error, featureCollection, response) {
+                    if (featureCollection.features.length === 0) {
+                        $('#sidecol').html('<center><h4>No Countries Found</h4></center>');
+                        return false;
+                    }
 
-                    $(this).mouseover(
-                        function () {
-                            $(this).find("div.divKwickTitle").fadeIn(1000);
-                            $(this).find("div.divKwickContent").fadeIn(1000);
-                        });
+                    //------ REMOVE DUPELICATE OBJECTIDS-----------------------
+                    var unique = {};
+                    var distinctFeatures = featureCollection.features.filter(function (feature) {
+                        var oid = feature.properties.OBJECTID;
+                        if (!unique[oid]) {
+                            unique[oid] = oid;
+                            return true;
+                        }
+                        return false;
+                    });
+                    featureCollection.features = distinctFeatures;
+                    //-------------------------------------------------------
+                    countries = L.geoJson(featureCollection,
+                    {
+                        style: getStyle,
+                        onEachFeature: onEachFeature
+                    }).addTo(map);
+                    //$('#sidecolcontent').html('Done');
+                    $('#sidecol').html('<center><h4>Click on Highlighted Country for more information</h4></center>');
+                    map.fitBounds(countries.getBounds().pad(0.5));
+                }); //rquery.run
+            }); //query.ids
+        }) //click
 
-                    $(this).mouseleave(
-                        function () {
-                            $(this).find("div.divKwickTitle").stop(true, true).fadeOut('fast');
-                            $(this).find("div.divKwickContent").stop(true, true).fadeOut('fast');
-                        });
-                });
+        //--------------------5-------------------------------------
+        $('#EDU').click(function () {
+            if (map.hasLayer(countries)) {
+                map.removeLayer(countries);
+                getStyle();
+            }
+            $('#sidecol').empty();
+            $('#sidecol').html('Querying...');
+            $('#sidecol').html('<center><h4>Querying....</h4></center>');
+            buttonPicked = 'EDU';
+            buttonType = document.getElementById('EDU');
+
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
+            var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
+            query.ids(function (error, ids, response) {
+                console.log(ids);
+                //console.log(ids.length);
+                if (ids === null) {
+                    $('#sidecol').html('<center><h4>No Country Code In Table</h4></center>');
+                    return false;
+                }
+                else if (ids.length === 0) {
+                    $('#sidecol').html('<center><h4>No Country Code In Table</h4></center>');
+                    return false;
+                }
+                rquery.objectIds([ids.join(',')]);
+                rquery.run(function (error, featureCollection, response) {
+                    if (featureCollection.features.length === 0) {
+                        $('#sidecol').html('<center><h4>No Countries Found</h4></center>');
+                        return false;
+                    }
+
+                    //------ REMOVE DUPELICATE OBJECTIDS-----------------------
+                    var unique = {};
+                    var distinctFeatures = featureCollection.features.filter(function (feature) {
+                        var oid = feature.properties.OBJECTID;
+                        if (!unique[oid]) {
+                            unique[oid] = oid;
+                            return true;
+                        }
+                        return false;
+                    });
+                    featureCollection.features = distinctFeatures;
+                    //-------------------------------------------------------
+                    countries = L.geoJson(featureCollection,
+                    {
+                        style: getStyle,
+                        onEachFeature: onEachFeature
+                    }).addTo(map);
+                    $('#sidecol').html('<center><h4>Click on Highlighted Country for more information</h4></center>');
+                    //$('#sidecolcontent').html('Done');
+                    map.fitBounds(countries.getBounds().pad(0.5));
+                }); //rquery.run
+            }); //query.ids
+        }) //click
+
+        //------------------6----------------------
+        $('#USR').click(function () {
+            if (map.hasLayer(countries)) {
+                map.removeLayer(countries);
+                getStyle();
+            }
+            $('#sidecol').empty();
+            $('#sidecol').html('<center><h4>Querying....</h4></center>');
+            buttonPicked = 'USR';
+            buttonType = document.getElementById('USR');
+
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
+            var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
+            query.ids(function (error, ids, response) {
+                if (ids === null) {
+                    $('#sidecol').html('<center><h4>No Country Code In Table</h4></center>');
+                    return false;
+                }
+                else if (ids.length === 0) {
+                    $('#sidecol').html('<center><h4>No Country Code In Table</h4></center>');
+                    return false;
+                }
+                rquery.objectIds([ids.join(',')]);
+                rquery.run(function (error, featureCollection, response) {
+                    if (featureCollection.features.length === 0) {
+                        $('#sidecol').html('<center><h4>No Countries Found</h4></center>');
+                        return false;
+                    }
+
+                    //------ REMOVE DUPELICATE OBJECTIDS-----------------------
+                    var unique = {};
+                    var distinctFeatures = featureCollection.features.filter(function (feature) {
+                        var oid = feature.properties.OBJECTID;
+                        if (!unique[oid]) {
+                            unique[oid] = oid;
+                            return true;
+                        }
+                        return false;
+                    });
+                    featureCollection.features = distinctFeatures;
+                    //-------------------------------------------------------
+                    countries = L.geoJson(featureCollection,
+                    {
+                        style: getStyle,
+                        onEachFeature: onEachFeature
+                    }).addTo(map);
+                    //$('#sidecolcontent').html('Done');
+                    $('#sidecol').html('<center><h4>Click on Highlighted Country for more information</h4></center>');
+                    map.fitBounds(countries.getBounds().pad(0.5));
+                }); //rquery.run
+            }); //query
+        }) //click
+
+        //------------------7----------------------
+        $('#OPM').click(function () {
+            if (map.hasLayer(countries)) {
+                map.removeLayer(countries);
+                getStyle();
+            }
+            $('#sidecol').empty();
+            $('#sidecol').html('<center><h4>Quering....</h4></center>');
+            buttonPicked = 'OPM';
+            buttonType = document.getElementById('OPM');
+
+            var query = L.esri.Tasks.query(tableURL).where("type like '" + buttonType.id + "'");
+            var rquery = L.esri.Tasks.queryRelated(tableURL).relationshipId("0");
+            query.ids(function (error, ids, response) {
+                if (ids === null) {
+                    $('#sidecol').html('<center><h4>No Country Code In Table</h4></center>');
+                    return false;
+                }
+                else if (ids.length === 0) {
+                    $('#sidecol').html('<center><h4>No Country Code In Table</h4></center>');
+                    return false;
+                }
+                rquery.objectIds([ids.join(',')]);
+                rquery.run(function (error, featureCollection, response) {
+                    if (featureCollection.features.length === 0) {
+
+                        $('#sidecol').html('<center><h4>No Countries Found</h4></center>');
+                        return false;
+                    }
+                    //------ REMOVE DUPELICATE OBJECTIDS-----------------------
+                    var unique = {};
+                    var distinctFeatures = featureCollection.features.filter(function (feature) {
+                        var oid = feature.properties.OBJECTID;
+                        if (!unique[oid]) {
+                            unique[oid] = oid;
+                            return true;
+                        }
+                        return false;
+                    });
+                    featureCollection.features = distinctFeatures;
+                    //-------------------------------------------------------
+                    countries = L.geoJson(featureCollection,
+                    {
+                        style: getStyle,
+                        onEachFeature: onEachFeature
+                    }).addTo(map);
+                    //$('#sidecolcontent').html('Done');
+                    $('#sidecol').html('<center><h4>Click on Highlighted Country for more information</h4></center>');
+                    map.fitBounds(countries.getBounds().pad(0.5));
+                }); //rquery.run
+            }); //query
+        }) //click
+
+    </script>
+
+    <!-- Render the Kwick Buttons -->
+    <script type="text/javascript">
+
+        $().ready(function () {
+            $('.kwicks').kwicks({
+                max: 250,
+                spacing: 10,
             });
 
-            function showMDG1() {
-                alert("worked");
-            }
+            $('ul.kwicks').find('li').each(function (index) {
+                $(this).corner();
+                $(this).find("div.divKwickTitle").hide();
+                $(this).find("div.divKwickContent").hide();
 
-        </script>
+                $(this).mouseover(
+					function () {
+					    $(this).find("div.divKwickTitle").fadeIn(1000);
+					    $(this).find("div.divKwickContent").fadeIn(1000);
+					});
 
-    </body>
+                $(this).mouseleave(
+					function () {
+					    $(this).find("div.divKwickTitle").stop(true, true).fadeOut('fast');
+					    $(this).find("div.divKwickContent").stop(true, true).fadeOut('fast');
+					});
+            });
+        });
 
+    </script>
+</body>
 </html>
