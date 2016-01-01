@@ -1,0 +1,757 @@
+
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<html>
+  <head>
+	<title>ICGC WEB PORTAL</title>
+	<style>
+		body {
+			margin:1em;
+			padding:0;
+			border: 0;
+			overflow: hidden;
+			height: 100%; 
+			max-height: 100%;
+		}
+		
+		#map{
+			position: fixed;
+			margin: 1em;
+			top: 45px;
+			left: 0;
+			right: 350px;
+			bottom: 15px;
+			overflow: hidden; 
+			background: #fff;
+		}
+	</style>
+    <!-- Mobile Metas -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Web Fonts  -->
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800%7CShadows+Into+Light" rel="stylesheet" type="text/css">
+
+	<!-- Libs CSS -->
+	<link rel="stylesheet" href="http://www.consciousglobalchange.org/vendor/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="http://www.consciousglobalchange.org/vendor/font-awesome/css/font-awesome.css">
+	
+	<!-- Responsive CSS -->
+	<link rel="stylesheet" href="http://www.consciousglobalchange.org/css/theme-responsive.css" />
+
+	<!-- Skin CSS -->
+	<link rel="stylesheet" href="http://www.consciousglobalchange.org/css/skins/default.css">
+
+	<!-- Custom CSS -->
+	<link rel="stylesheet" href="http://www.consciousglobalchange.org/css/custom.css">
+
+	<!-- Head Libs -->
+	<script src="http://www.consciousglobalchange.org/vendor/modernizr.js"></script>
+
+	<!--[if IE]>
+		<link rel="stylesheet" href="http://www.consciousglobalchange.org/css/ie.css">
+	<![endif]-->
+
+	<!--[if lte IE 8]>
+		<script src="http://www.consciousglobalchange.org/vendor/respond.js"></script>
+	<![endif]-->
+	
+	<link rel="stylesheet" href="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.css" />
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> 
+	
+	<!-- Load Leaflet from CDN-->
+	<script src="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.js"></script>
+	<!--[if lte IE 8]>
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.ie.css" />
+	<![endif]-->
+
+	<!-- Load Esri Leaflet from CDN -->
+	<script src="//cdn.jsdelivr.net/leaflet.esri/1.0.0/esri-leaflet.js"></script>
+	
+	<!-- Esri Leaflet Related -->
+	<script src="//cdn.jsdelivr.net/leaflet.esri.related/1.0.2/esri-leaflet-related.js"></script>
+
+	<script src="http://fgnass.github.io/spin.js/spin.min.js"></script>
+	<script src="http://fgnass.github.io/spin.js/jquery.spin.js"></script>
+	<script src="https://rawgithub.com/ebrelsford/Leaflet.loading/master/src/Control.Loading.js"></script>
+</head>
+<body>
+<div style="margin:1em; height: 100%;">
+	<div class="row" style="height: 100%;">
+		<div class="col-xs-8 col-md-9" style="height: 100%;">
+			<div id="btnDiv">
+				<button type="button" class="btn btn-default" id="NSM" value="NSM">News</button>
+				<button type="button" class="btn btn-default" id="SDG" value="SDG">SDG Status</button>
+				<button type="button" class="btn btn-default" id="CMP" value ="CMP">City Models/Plans</button>
+				<button type="button" class="btn btn-default" id="CSM" value ="CSM">Story Maps</button>
+				<button type="button" class="btn btn-default" id="EDU" value ="EDU">Educational Games</button>
+				<button type="button" class="btn btn-default" id="USR" value ="USR">User Submitted</button>
+				<button type="button" class="btn btn-default" id="OPM" value ="OPM">Project Map</button>
+				<button type="button" class="btn btn-default" id="FULL" value ="FULL">World Map</button>
+			</div>
+			<div id="map" class="img-responsive"></div>
+		</div>
+		<div class="col-xs-4 col-md-3" id="sidecolParent">
+			<p class="center-block"><img id="imgLogo" class="img-responsive" src="http://www.consciousglobalchange.org/img/logo.png" /></p>
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h4 class="panel-title">Information Panel</h4>
+				</div>
+				<div class="panel-body" id="sidecol" style="overflow-y:scroll;">
+					Click on a button on the top of the map to view further details.
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+			var countries, country, xmlReq;
+			var admin;
+			var buttonPicked;
+			var btnPrev = btnCurr = "";
+			var buttonType;
+			var data = {}, key = [], value= [], cntryIds = [];
+			var map = L.map('map',{minZoom: 3}).setView([11.505,  -0.09], 3);
+			
+			$(document).ready(function() { 
+				resizeMap();
+			});
+			
+			$("button").click(function() {
+				btnCurr = this.id;
+				$("#" + btnCurr).addClass("btn-primary");
+				
+				if (btnPrev != "") {
+					$("#" + btnPrev).removeClass("btn-primary");
+				}
+				btnPrev = btnCurr;
+			});
+			
+			$(window).on('resize', resizeMap);
+			
+			function resizeMap() {
+				$('#map').css('top', $("#btnDiv").height() + 15);
+				$("#map").width($("#btnDiv").width());
+				$('#sidecol').css('max-height', $('#map').height() - $('#imgLogo').height());
+			}
+			
+			var tileURL = 'http://tile.openstreetmap.org/tile/{z}/{x}/{y}.png'
+			var featureURL = "http://dev.consciousglobalchange.org/arcgis/rest/services/MEP/webmap_catalog/FeatureServer/0"
+			var tableURL =  "http://dev.consciousglobalchange.org/arcgis/rest/services/MEP/webmap_catalog/FeatureServer/1";
+
+			L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+			}).addTo(map);
+
+			function getStyle(feature) {
+				return {border: 'red', color: 'orange', weight: 3,  fillOpacity: 0.1};
+			}
+
+			function myStopFunction() {
+				if (xmlReq != null){xmlReq.abort()};
+	    	//console.log('yeah you called me');
+			}
+
+			function onEachFeature(feature, layer)
+			{
+				layer.on(
+				{
+					click: highlightFeature, 
+					mouseout: resetHighlight
+				});
+			}
+
+			function highlightFeature(e) 
+			{
+				var layer = e.target;
+				layer.setStyle(
+				{
+					border: 'black',
+					weight: 3,
+					color: 'orange',
+					fillOpacity: 0.1
+				});
+				if (!L.Browser.ie && !L.Browser.opera) 
+				{
+					layer.bringToFront();
+				}
+				//console.log(layer.feature.properties.NAME);
+				$('#sidecol').empty();
+				$('#sidecol').append('<h4 class="text-center">'+layer.feature.properties.NAME + '</h4>');
+				var xquery = L.esri.Tasks.query({url:featureURL}).where("OBJECTID like '" + layer.feature.properties.OBJECTID + "'");
+				var rxquery = L.esri.Tasks.queryRelated({url:featureURL}).relationshipId("0");
+				xquery.ids(function(error, ids, response)
+				{
+					//console.log(ids);
+					rxquery.objectIds([ids.join(',')]);
+					rxquery.run(function(error, featureCollection, response)
+					{
+						//console.log(featureCollection.features);
+						$('#sidecolcontent').empty();
+					//------ REMOVE DUPELICATE OBJECTIDS-----------------------
+					var xunique = {};  
+					var xdistinctFeatures = featureCollection.features.filter(function(feature) {  
+						var xoid = feature.properties.OBJECTID;  
+						if (!xunique[xoid]) {  
+							xunique[xoid] = xoid;  
+							return true;  
+							}
+						return false;  
+					});
+					featureCollection.features = xdistinctFeatures;
+					//console.log(featureCollection.features);
+					//console.log(featureCollection.features.length);
+					//-------------------------------------------------------
+						data = featureCollection.features
+						
+						for (var i = 0; i < data.length; i++) 
+						{
+							//alert(data[i].properties.hyperlink);
+							//alert( 'button clicked: ' + buttonPicked);
+							//alert('button type: ' + buttonType.value);
+							
+							//alert(data[i].properties); // + data[i].properties.hyperlink + buttonType.value == buttonPicked);
+							//console.log(data[i].properties.type == buttonPicked);
+							//if (data[i].properties && data[i].properties.hyperlink && buttonType.value == buttonPicked) 
+							if (data[i].properties.type == buttonPicked) 
+							{
+								$('#sidecol').append("<hr><br>" +
+								"<center><p class='title'>" + data[i].properties.title + "</p></center>"
+								+"<i><p class='abstract'>" + data[i].properties.abstract + "</p></i>"
+								+ "<p class='others'>Development Goals:&nbsp&nbsp&nbsp&nbsp" + data[i].properties.dev_goal + "<br>"
+								+ "Audience:</b>&nbsp&nbsp&nbsp&nbsp" + data[i].properties.audience + "<br>"
+								+ "hyperlink:&nbsp&nbsp&nbsp&nbsp <a href =' " + data[i].properties.hyperlink + " ' target= _blank>click here </a></p>");
+							}
+						}
+						if (data.properties && !data.properties.hyperlink) 
+						{
+							$('#sidecol').empty();
+						 //$('#sidecol').append('<p><h3><center> COUNTRY NAME:<br>' + '<u>' + layer.feature.properties.country + '</center></u></b>');
+						}
+					}) //xrquery.run
+				}) //xquery.ids
+			} //hghlghtFeature
+		
+			function resetHighlight(e) 
+			{
+				var layer = e.target;
+				//countries.resetStyle(e.target);
+				layer.setStyle({border: 'red', color: 'orange', weight: 3,  fillOpacity: 0.1});
+			}
+
+			//----------------------------------1---------------------------
+			$('#NSM').click(function()
+			{
+				$('#NSM').addClass('btn-primary');
+				myStopFunction();
+			  var nsmcntryids = new Array();
+				if(map.hasLayer(countries))
+				{
+					map.removeLayer(countries);
+					getStyle();
+					map.setView([11.505,  -0.09], 2)
+				}
+				$('#sidecol').empty();
+				$('#sidecol').html('<center>Querying...</center>');
+				buttonPicked = 'NSM';
+				buttonType = document.getElementById('NSM');
+
+				var query = L.esri.Tasks.query({url:tableURL}).where("type like '" + buttonType.value + "'");
+				var rquery = L.esri.Tasks.queryRelated({url:tableURL}).relationshipId("0");
+				query.ids(function(error, ids, response)
+				{
+					if (ids === null) 
+					{
+						alert("No country code in TABLE !");
+						return false;
+					}
+					else if (ids.length === 0)
+					{
+						alert("No country code in TABLE !");
+						return false;
+					}
+					rquery.objectIds([ids.join(',')]);
+					xmlReq = rquery.run(function(error, featureCollection, response)
+					{
+						//console.log(featureCollection);
+						//console.log(featureCollection.features.length);
+						if (featureCollection.features.length === 0){
+							$("#sidecol").html("No countries found!<br />Please select a different option.");
+							alert('No countries found!!');
+							return false;
+						} //if
+						//------ REMOVE DUPELICATE OBJECTIDS-----------------------
+						var unique = {};  
+						var distinctFeatures = featureCollection.features.filter(function(feature) {  
+							var oid = feature.properties.OBJECTID;  
+							if (!unique[oid]) {  
+								unique[oid] = oid;  
+								return true;  
+								}
+							return false;
+						});
+						featureCollection.features = distinctFeatures;
+						//-------------------------------------------------------
+						countries = L.geoJson(featureCollection, 
+						{
+							style: getStyle,
+							onEachFeature: onEachFeature 
+						}).addTo(map);
+						//$('#sidecolcontent').html('Done');
+						//map.fitBounds(countries.getBounds());
+
+						countries.on('click', function(evt) { 
+	  					// http://leafletjs.com/reference.html#featuregroup-getbounds  
+	  					var bounds = evt.layer.getBounds()  
+ 							// http://leafletjs.com/reference.html#map-fitbounds  
+ 							map.fitBounds(bounds);  
+						});						
+					}); //rquery.run
+				}); //query
+			}) //click
+
+
+			//---------------------------------2------------------------
+			$('#SDG').click(function()
+			{
+				myStopFunction();
+				if(map.hasLayer(countries)){
+					map.removeLayer(countries);
+					getStyle();
+					map.setView([11.505,  -0.09], 2)
+				}
+				$('#sidecol').empty();
+				$('#sidecol').html('<center>Querying...</center>');
+				buttonPicked = 'SDG';
+				buttonType = document.getElementById('SDG');
+
+				var query = L.esri.Tasks.query({url:tableURL}).where("type like '" + buttonType.value + "'");
+				var rquery = L.esri.Tasks.queryRelated({url:tableURL}).relationshipId("0");
+				query.ids(function(error, ids, response)
+				{
+					//console.log(ids.length);
+					//console.log(ids);
+					if (ids === null) 
+					{
+						alert("No country code in TABLE !");
+						return false;
+					}
+					else if (ids.length === 0)
+					{
+						alert("No country code in TABLE !");
+						return false;
+					}
+					rquery.objectIds([ids.join(',')]);
+					xmlReq = rquery.run(function(error, featureCollection, response)
+					{
+						//console.log(featureCollection.features.length);
+						if (featureCollection.features.length === 0){
+							$("#sidecol").html("No countries found!<br />Please select a different option.");
+							alert('No countries found!!');
+							return false;
+						}
+
+						//------ REMOVE DUPELICATE OBJECTIDS-----------------------
+						var unique = {};  
+						var distinctFeatures = featureCollection.features.filter(function(feature) {
+							var oid = feature.properties.OBJECTID;  
+							if (!unique[oid]) {
+								unique[oid] = oid;  
+								return true;  
+							}
+							return false;
+						});
+						featureCollection.features = distinctFeatures;
+						//-------------------------------------------------------
+						countries = L.geoJson(featureCollection, {
+							style: getStyle,
+							onEachFeature: onEachFeature 
+						}).addTo(map);
+						//$('#sidecolcontent').html('Done');
+						//map.fitBounds(countries.getBounds());
+						countries.on('click', function(evt) {
+		    			// http://leafletjs.com/reference.html#featuregroup-getbounds  
+		    			var bounds = evt.layer.getBounds()  
+ 		   				// http://leafletjs.com/reference.html#map-fitbounds  
+							map.fitBounds(bounds);  
+						});						
+					}); //rquery.run
+				}); //query
+			}) //click
+
+			//------------------------------------3---------------------
+			$('#CMP').click(function()
+			{
+				myStopFunction();
+			  var nsmcntryids = new Array();
+				if(map.hasLayer(countries)){
+					map.removeLayer(countries);
+					getStyle();
+					map.setView([11.505,  -0.09], 2)
+				}
+				$('#sidecol').empty();
+				$('#sidecol').html('<center>Querying...</center>');
+				buttonPicked = 'CMP';
+				buttonType = document.getElementById('CMP');
+
+				var query = L.esri.Tasks.query({url:tableURL}).where("type like '" + buttonType.value + "'");
+				var rquery = L.esri.Tasks.queryRelated({url:tableURL}).relationshipId("0");
+				query.ids(function(error, ids, response){
+					//console.log(ids);
+					//console.log(ids.length);
+					if (ids === null) {
+						alert("No country code in TABLE !");
+						return false;
+					}
+					else if (ids.length === 0){
+						alert("No country code in TABLE !");
+						return false;
+					}
+					rquery.objectIds([ids.join(',')]);
+					xmlReq = rquery.run(function(error, featureCollection, response){
+						//console.log(featureCollection);
+						//console.log(featureCollection.features.length);
+						if (featureCollection.features.length === 0){
+							$("#sidecol").html("No countries found!<br />Please select a different option.");
+							alert('No countries found!!');
+							return false;
+						}
+
+						//------ REMOVE DUPELICATE OBJECTIDS-----------------------
+						var unique = {};  
+						var distinctFeatures = featureCollection.features.filter(function(feature) {
+							var oid = feature.properties.OBJECTID;  
+							if (!unique[oid]) {
+								unique[oid] = oid;  
+								return true;  
+								}
+							return false;  
+						});
+						featureCollection.features = distinctFeatures;
+						//-------------------------------------------------------
+
+						countries = L.geoJson(featureCollection, {
+							style: getStyle,
+							onEachFeature: onEachFeature 
+						}).addTo(map);
+						//$('#sidecolcontent').html('Done');
+						//map.fitBounds(countries.getBounds());
+
+						countries.on('click', function(evt) {
+							// http://leafletjs.com/reference.html#featuregroup-getbounds  
+							var bounds = evt.layer.getBounds()  
+							// http://leafletjs.com/reference.html#map-fitbounds  
+							map.fitBounds(bounds);  
+						});						
+					}); //rquery.run
+				}); //query
+			}) //click
+
+			//-----------------------------4----------------------------
+			$('#CSM').click(function()
+			{
+				myStopFunction();
+				if(map.hasLayer(countries))
+				{
+					map.removeLayer(countries);
+					getStyle();
+					map.setView([11.505,  -0.09], 2)
+				}
+				$('#sidecol').empty();
+				$('#sidecol').html('<center>Querying...</center>');
+				buttonPicked = 'CSM';
+				buttonType = document.getElementById('CSM');
+   
+				var query = L.esri.Tasks.query({url:tableURL}).where("type like '" + buttonType.value + "'");
+				var rquery = L.esri.Tasks.queryRelated({url:tableURL}).relationshipId("0");
+				query.ids(function(error, ids, response)
+				{
+					//console.log(ids);
+					//console.log(ids.length);
+					if (ids === null) 
+					{
+						alert("No country code in TABLE !");
+						return false;
+					}
+					else if (ids.length === 0)
+					{
+						alert("No country code in TABLE !");
+						return false;
+					}
+					rquery.objectIds([ids.join(',')]);
+					xmlReq = rquery.run(function(error, featureCollection, response)
+					{
+						//console.log(featureCollection);
+						//console.log(featureCollection.features.length);
+						if (featureCollection.features.length === 0)
+						{
+							$("#sidecol").html("No countries found!<br />Please select a different option.");
+							alert('No countries found!!');
+							return false;
+						}
+
+						//------ REMOVE DUPELICATE OBJECTIDS-----------------------
+						var unique = {};  
+						var distinctFeatures = featureCollection.features.filter(function(feature) {  
+							var oid = feature.properties.OBJECTID;  
+							if (!unique[oid]) {  
+								unique[oid] = oid;  
+								return true;  
+								}
+							return false;  
+						});
+						featureCollection.features = distinctFeatures;
+						//-------------------------------------------------------
+						countries = L.geoJson(featureCollection, 
+						{
+							style: getStyle,
+							onEachFeature: onEachFeature 
+						}).addTo(map);
+						//$('#sidecolcontent').html('Done');
+						//map.fitBounds(countries.getBounds());
+
+						countries.on('click', function(evt) { 
+							// http://leafletjs.com/reference.html#featuregroup-getbounds  
+							var bounds = evt.layer.getBounds()  
+							// http://leafletjs.com/reference.html#map-fitbounds  
+							map.fitBounds(bounds);  
+						});						
+
+					}); //rquery.run
+				}); //query.ids
+			}) //click
+
+			//--------------------5-------------------------------------
+			$('#EDU').click(function()
+			{
+				myStopFunction();
+				if(map.hasLayer(countries))
+				{
+					map.removeLayer(countries);
+					getStyle();
+					map.setView([11.505,  -0.09], 2)
+				}
+				$('#sidecol').empty();
+				$('#sidecol').html('<center>Querying...</center>');
+				buttonPicked = 'EDU';
+				buttonType = document.getElementById('EDU');
+
+				var query = L.esri.Tasks.query({url:tableURL}).where("type like '" + buttonType.value + "'");
+				var rquery = L.esri.Tasks.queryRelated({url:tableURL}).relationshipId("0");
+				query.ids(function(error, ids, response)
+				{
+					//console.log(ids);
+					//console.log(ids.length);
+					if (ids === null) 
+					{
+						alert("No country code in TABLE !");
+						return false;
+					}
+					else if (ids.length === 0)
+					{
+						alert("No country code in TABLE !");
+						return false;
+					}
+					rquery.objectIds([ids.join(',')]);
+					xmlReq = rquery.run(function(error, featureCollection, response)
+					{
+						//console.log(featureCollection);
+						//console.log(featureCollection.features.length);
+						if (featureCollection.features.length === 0)
+						{
+							$("#sidecol").html("No countries found!<br />Please select a different option.");
+							alert('No countries found!!');
+							return false;
+						}
+
+						//------ REMOVE DUPELICATE OBJECTIDS-----------------------
+						var unique = {};  
+						var distinctFeatures = featureCollection.features.filter(function(feature) {  
+							var oid = feature.properties.OBJECTID;  
+							if (!unique[oid]) {  
+								unique[oid] = oid;  
+								return true;  
+								}
+							return false;  
+						});
+						featureCollection.features = distinctFeatures;
+						//-------------------------------------------------------
+						countries = L.geoJson(featureCollection, 
+						{
+							style: getStyle,
+							onEachFeature: onEachFeature 
+						}).addTo(map);
+						//$('#sidecolcontent').html('Done');
+						//map.fitBounds(countries.getBounds());
+
+						countries.on('click', function(evt) { 
+		    				// http://leafletjs.com/reference.html#featuregroup-getbounds  
+	  	  				var bounds = evt.layer.getBounds()  
+    					//http://leafletjs.com/reference.html#map-fitbounds  
+							map.fitBounds(bounds);  
+						});
+					}); //rquery.run
+				}); //query.ids
+			}) //click
+
+			//------------------6----------------------
+			$('#USR').click(function()
+			{
+				myStopFunction();
+				if(map.hasLayer(countries))
+				{
+					map.removeLayer(countries);
+					getStyle();
+					map.setView([11.505,  -0.09], 2)
+				}
+				$('#sidecol').empty();
+				$('#sidecol').html('<center>Querying...</center>');
+				buttonPicked = 'USR';
+				buttonType = document.getElementById('USR');
+
+				var query = L.esri.Tasks.query({url:tableURL}).where("type like '" + buttonType.value + "'");
+				var rquery = L.esri.Tasks.queryRelated({url:tableURL}).relationshipId("0");
+				query.ids(function(error, ids, response)
+				{
+					//alert(response.objectIds);
+					//console.log(response);
+					//console.log(ids.length);
+					if (ids === null) 
+					{
+						alert("No country code in TABLE !");
+						return false;
+					}
+					else if (ids.length === 0)
+					{
+						alert("No country code in TABLE !");
+						return false;
+					}
+					rquery.objectIds([ids.join(',')]);
+					xmlReq = rquery.run(function(error, featureCollection, response)
+					{
+						//console.log(featureCollection);
+						//console.log(featureCollection.features.length);
+						if (featureCollection.features.length === 0)
+						{
+							$("#sidecol").html("No countries found!<br />Please select a different option.");
+							alert('No countries found!!');
+							return false;
+						}
+
+						//------ REMOVE DUPELICATE OBJECTIDS-----------------------
+						var unique = {};  
+						var distinctFeatures = featureCollection.features.filter(function(feature) {  
+							var oid = feature.properties.OBJECTID;  
+							if (!unique[oid]) {  
+								unique[oid] = oid;  
+								return true;  
+								}
+							return false;  
+						});
+						featureCollection.features = distinctFeatures;
+						//-------------------------------------------------------
+						countries = L.geoJson(featureCollection, 
+						{
+							style: getStyle,
+							onEachFeature: onEachFeature 
+						}).addTo(map);
+						//$('#sidecolcontent').html('Done');
+						//map.fitBounds(countries.getBounds());
+
+						countries.on('click', function(evt) { 
+							// http://leafletjs.com/reference.html#featuregroup-getbounds  
+							var bounds = evt.layer.getBounds()  
+							// http://leafletjs.com/reference.html#map-fitbounds  
+							map.fitBounds(bounds);  
+						});						
+					}); //rquery.run
+				}); //query
+			}) //click
+		
+			//------------------7----------------------
+			$('#OPM').click(function()
+			{
+				myStopFunction();
+				if(map.hasLayer(countries))
+				{
+					map.removeLayer(countries);
+					getStyle();
+					map.setView([11.505,  -0.09], 2)
+				}
+				$('#sidecol').empty();
+				$('#sidecol').html('<center>Querying...</center>');
+				buttonPicked = 'OPM';
+				buttonType = document.getElementById('OPM');
+
+				var query = L.esri.Tasks.query({url:tableURL}).where("type like '" + buttonType.value + "'");
+				var rquery = L.esri.Tasks.queryRelated({url:tableURL}).relationshipId("0");
+				query.ids(function(error, ids, response)
+				{
+					//console.log(ids);
+					//console.log(ids.length);
+					if (ids === null) 
+					{
+						alert("No country code in TABLE !");
+						return false;
+					}
+					else if (ids.length === 0)
+					{
+						alert("No country code in TABLE !");
+						return false;
+					}
+					rquery.objectIds([ids.join(',')]);
+					xmlReq = rquery.run(function(error, featureCollection, response)
+					{
+						//console.log(featureCollection);
+						//console.log(featureCollection.features.length);
+						if (featureCollection.features.length === 0)
+						{
+							$("#sidecol").html("No countries found!<br />Please select a different option.");
+							alert('No countries found!!');
+							return false;
+						}
+						//------ REMOVE DUPELICATE OBJECTIDS-----------------------
+						var unique = {};  
+						var distinctFeatures = featureCollection.features.filter(function(feature) {  
+							var oid = feature.properties.OBJECTID;  
+							if (!unique[oid]) {  
+								unique[oid] = oid;  
+								return true;  
+								}
+							return false;  
+						});
+						featureCollection.features = distinctFeatures;
+					//-------------------------------------------------------
+						countries = L.geoJson(featureCollection, 
+						{
+							style: getStyle,
+							onEachFeature: onEachFeature 
+						}).addTo(map);
+						//$('#sidecolcontent').html('Done');
+						//map.fitBounds(countries.getBounds());
+
+						countries.on('click', function(evt) { 
+							// http://leafletjs.com/reference.html#featuregroup-getbounds  
+							var bounds = evt.layer.getBounds()  
+							// http://leafletjs.com/reference.html#map-fitbounds  
+							map.fitBounds(bounds);  
+						});						
+					}); //rquery.run
+				}); //query
+			}) //click
+
+			//------------------8----------------------
+			$('#FULL').click(function()
+			{
+				myStopFunction();
+				if(map.hasLayer(countries))
+				{
+					map.removeLayer(countries);
+					getStyle();
+				}
+				$('#sidecol').empty();
+				map.setView([11.505,  -0.09], 2)
+			}) //click
+    </script>
+</div>
+</body>
+</html>
